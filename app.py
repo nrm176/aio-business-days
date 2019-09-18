@@ -1,5 +1,6 @@
 from aiohttp import web
 from business_days_util import BusinessDaysUtil
+import os
 # https://docs.aiohttp.org/en/latest/web_quickstart.html
 
 
@@ -16,4 +17,4 @@ async def biz_days(request):
 
 app = web.Application()
 app.add_routes(routes)
-web.run_app(app)
+web.run_app(app, port=os.getenv('PORT'))
