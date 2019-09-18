@@ -11,10 +11,6 @@ routes = web.RouteTableDef()
 
 @routes.get('/biz')
 async def biz_days(request):
-    peername = request.transport.get_extra_info('peername')
-    if peername is not None:
-        host, port = peername
-        logger.info('request from {}:{}'.format(host, port))
     _from = request.rel_url.query.get('from')
     _n = request.rel_url.query.get('n')
     d = util.add_n_biz_days(from_date=_from, n=int(_n))
