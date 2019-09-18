@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 import argparse
 from lib.logtaker import logger
 from threading import Lock
-
+import sqlite3
+import traceback
 
 class BusinessDaysUtil(object):
 
@@ -53,6 +54,7 @@ class BusinessDaysUtil(object):
 
     _unique_instance = None
     _lock = Lock()
+    db_connection = None
 
     def __new__(cls):
         raise NotImplementedError('Cannot initialize via Constructor')
@@ -64,11 +66,27 @@ class BusinessDaysUtil(object):
     @classmethod
     def init(cls):
         logger.info('initializing util class....')
+
+        cls.load_data_from_db()
+
         if not cls._unique_instance:
             with cls._lock:
                 if not cls._unique_instance:
                     cls._unique_instance = cls.__internal_new__()
         return cls._unique_instance
+
+
+    def load_data_from_db(self):
+        logger.info('loading data from db')
+        try:
+            self.db_connection = sqlite3.connect()
+            cur = self.db_connection.corsor()
+            cur.execute("SELECT * FROM holidays")
+            rows = cur.fetchall()
+            return rows
+        except Exception as e:
+            logger.error(traceback.format_tb(e.__traceback__))
+
 
     @classmethod
     def add_n_biz_days(cls, from_date=None, n=None):
