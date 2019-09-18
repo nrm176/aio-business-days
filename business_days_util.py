@@ -67,7 +67,7 @@ class BusinessDaysUtil(object):
     def init(cls):
         logger.info('initializing util class....')
 
-        cls.load_data_from_db()
+        # cls.load_data_from_db()
 
         if not cls._unique_instance:
             with cls._lock:
