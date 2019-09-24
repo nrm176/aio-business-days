@@ -92,11 +92,19 @@ class BusinessDaysUtil(object):
     def add_n_biz_days(cls, from_date=None, n=None):
         days_to_add = n
         result = datetime.strptime(from_date, cls.DATETIME_FORMAT)
-        while days_to_add > 0:
-            result += timedelta(days=1)
-            if result.weekday() >= 5 or result.strftime(cls.DATETIME_FORMAT) in cls.HOLIDAYS:  # sunday = 6
-                continue
-            days_to_add -= 1
+        positive = True if days_to_add > 0 else False
+        if positive:
+            while days_to_add > 0:
+                result += timedelta(days=1)
+                if result.weekday() >= 5 or result.strftime(cls.DATETIME_FORMAT) in cls.HOLIDAYS:  # sunday = 6
+                    continue
+                days_to_add -= 1
+        else:
+            while days_to_add < 0:
+                result -= timedelta(days=1)
+                if result.weekday() >= 5 or result.strftime(cls.DATETIME_FORMAT) in cls.HOLIDAYS:  # sunday = 6
+                    continue
+                days_to_add += 1
         return result.strftime(cls.DATETIME_FORMAT)
 
 
