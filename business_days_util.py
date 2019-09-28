@@ -107,6 +107,13 @@ class BusinessDaysUtil(object):
                 days_to_add += 1
         return result.strftime(cls.DATETIME_FORMAT)
 
+    @staticmethod
+    def valid(_from):
+        #20190512
+        if len(_from) != 8:
+            return False
+        return True
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Arguments of business days util')
