@@ -5,8 +5,8 @@ from threading import Lock
 import sqlite3
 import traceback
 
-class BusinessDaysUtil(object):
 
+class BusinessDaysUtil(object):
     DATETIME_FORMAT = '%Y%m%d'
 
     HOLIDAYS = [
@@ -94,7 +94,6 @@ class BusinessDaysUtil(object):
                     cls._unique_instance = cls.__internal_new__()
         return cls._unique_instance
 
-
     def load_data_from_db(self):
         logger.info('loading data from db')
         try:
@@ -105,7 +104,6 @@ class BusinessDaysUtil(object):
             return rows
         except Exception as e:
             logger.error(traceback.format_tb(e.__traceback__))
-
 
     @classmethod
     def add_n_biz_days(cls, from_date=None, n=None):
@@ -126,9 +124,24 @@ class BusinessDaysUtil(object):
                 days_to_add += 1
         return result.strftime(cls.DATETIME_FORMAT)
 
+    @classmethod
+    def get_closest_business_day(cls):
+        target = datetime.today()
+        while target.weekday() >= 5 or target.strftime(cls.DATETIME_FORMAT) in cls.HOLIDAYS:
+            target -= timedelta(days=1)
+        return target.strftime(cls.DATETIME_FORMAT)
+
+    @classmethod
+    def get_target_two_days(cls, ago, pattern=None):
+        t2 = cls.get_closest_business_day()
+        t1 = cls.add_n_biz_days(from_date=t2, n=int(ago))
+        x2 = datetime.today() - datetime.strptime(t2, cls.DATETIME_FORMAT)
+        x1 = datetime.today() - datetime.strptime(t1, cls.DATETIME_FORMAT)
+        return t2, t1, x2.days, x1.days
+
     @staticmethod
     def valid(_from):
-        #20190512
+        # 20190512
         if len(_from) != 8:
             return False
         return True
